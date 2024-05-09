@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <math.h>
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 500
+#define SCREEN_HEIGHT 500
+#define INITIAL_RADIUS 20
+#define RADIUS_INCREMENT 1
 
 bool initializeSDL(SDL_Window** window, SDL_Renderer** renderer) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -60,6 +62,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    int centerX = SCREEN_WIDTH / 2;
+    int centerY = SCREEN_HEIGHT / 2;
+    int radius = INITIAL_RADIUS;
+
     SDL_Event event;
     bool running = true;
 
@@ -70,11 +76,19 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 20, 255, 205, 55);
+        // Increase the radius
+        radius += RADIUS_INCREMENT;
+
+        // Check collision with window boundaries
+        if (centerX + radius >= SCREEN_WIDTH || centerY + radius >= SCREEN_HEIGHT || centerX - radius <= 0 || centerY - radius <= 0) {
+            radius = INITIAL_RADIUS;
+        }
+
+        SDL_SetRenderDrawColor(renderer, 100, 200, 55, 35);
         SDL_RenderClear(renderer);
 
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-        drawCircle(renderer, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 100);
+        drawCircle(renderer, centerX, centerY, radius);
 
         SDL_RenderPresent(renderer);
     }
@@ -85,3 +99,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
